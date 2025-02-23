@@ -15,7 +15,10 @@ class PlayerListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Player
-        fields = ["id", "name_full", "position", "get_position", "team"]
+        fields = ["id", "name_full",
+                  "primary_position", "get_primary_position",
+                  "secondary_position", "get_secondary_position",
+                  "team"]
 
 
 class BattingSerializer(serializers.ModelSerializer):

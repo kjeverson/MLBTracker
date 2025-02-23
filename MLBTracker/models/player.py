@@ -17,27 +17,46 @@ class Player(models.Model):
 	weight = models.IntegerField(null=False)
 	throws = models.CharField(max_length=2, null=False)
 	bats = models.CharField(max_length=2, null=False)
-	position = models.CharField(max_length=3, null=True, blank=True)
+	primary_position = models.CharField(max_length=3, null=True, blank=True)
+	secondary_position = models.CharField(max_length=3, null=True, blank=True)
 
 	def __repr__(self):
 		return f"{self.name_full}-{self.team}"
 
-	def get_position(self):
+	def get_primary_position(self):
 		POSITIONS = ["P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"]
-		if not self.position:
+		if not self.primary_position:
 			return None
-		elif self.position not in ['O', 'D', 'H', '1']:
-			return POSITIONS[int(self.position)-1]
-		elif self.position == '1':
+		elif self.primary_position not in ['O', 'D', 'H', '1']:
+			return POSITIONS[int(self.primary_position)-1]
+		elif self.primary_position == '1':
 			return f'{self.throws}HP'
 		else:
-			if not self.position:
+			if not self.primary_position:
 				return "NONE"
-			if self.position == 'O':
+			if self.primary_position == 'O':
 				return "OF"
-			if self.position == 'D':
+			if self.primary_position == 'D':
 				return "DH"
-			if self.position == 'H':
+			if self.primary_position == 'H':
+				return "PH"
+
+	def get_secondary_position(self):
+		POSITIONS = ["P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"]
+		if not self.secondary_position:
+			return None
+		elif self.secondary_position not in ['O', 'D', 'H', '1']:
+			return POSITIONS[int(self.secondary_position)-1]
+		elif self.secondary_position == '1':
+			return f'{self.throws}HP'
+		else:
+			if not self.secondary_position:
+				return "NONE"
+			if self.secondary_position == 'O':
+				return "OF"
+			if self.secondary_position == 'D':
+				return "DH"
+			if self.secondary_position == 'H':
 				return "PH"
 
 	def bats_long(self):

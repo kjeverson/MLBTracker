@@ -16,7 +16,7 @@
         <div class="playerInformation">
             <h4>{{ player.name_first }}</h4>
             <h1>{{ player.name_last }}</h1>
-            <h6>{% if player.position %}<span class="badge bg-light text-dark">{{ player.get_position }}</span>{% endif %} {{ player.team.full_name }}</h6>
+            <h6>{% if player.primary_position %}<span class="badge bg-light text-dark">{{ player.get_primary_position }}{% if player.secondary_position %}/{{ player.get_secondary_position }}{% endif %}</span>{% endif %} {{ player.team.full_name }}</h6>
             <small>
                 Height: {{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %} • Weight: {{ player.weight }} lbs <br>
                 Bats: {{ player.bats_long }} • Throws: {{ player.throws_long }}

@@ -83,7 +83,12 @@ function createPlayerRow(player) {
     const tr = document.createElement("tr");
     tr.classList.add("p-0", "m-0");
     tr.dataset.name = `${player.name_full}`.toLowerCase();
-    tr.dataset.pos = `${player.position}`;
+    if(player.secondary_position) {
+        tr.dataset.pos = `${player.primary_position}, ${player.secondary_position}`;
+    }
+    else {
+        tr.dataset.pos = `${player.primary_position}`;
+    }
 
     const td = document.createElement("td");
     td.classList.add("p-0", "m-0");
@@ -122,7 +127,12 @@ function createPlayerRow(player) {
 
     const positionBadge = document.createElement("span");
     positionBadge.classList.add("badge", "bg-light", "text-dark");
-    positionBadge.textContent = player.get_position;
+    if(player.secondary_position){
+        positionBadge.textContent = player.get_primary_position + "/" + player.get_secondary_position;
+    }
+    else {
+        positionBadge.textContent = player.get_primary_position;
+    }
 
     playerDetails.appendChild(positionBadge);
     playerDetails.appendChild(document.createTextNode(` ${player.team.full_name}`));

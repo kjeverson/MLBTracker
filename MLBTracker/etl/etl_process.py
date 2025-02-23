@@ -125,12 +125,14 @@ def import_data(data):
 				weight=entry["weight"],
 				throws=entry["throws"],
 				bats=entry["bats"],
-				position=entry["primary_position"]
+				primary_position=entry.get("primary_position"),
+				secondary_position=entry.get("secondary_position")
 			)
 
 			if not created:
 				player.team = team
-				player.position = entry['primary_position']
+				player.primary_position = entry.get('primary_position')
+				player.secondary_position = entry.get('secondary_position')
 				player.weight = entry['weight']
 				player.height_feet = entry['height_feet']
 				player.height_inches = entry.get("height_inches")
