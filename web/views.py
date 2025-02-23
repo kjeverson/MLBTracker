@@ -28,11 +28,24 @@ def get_player_modal(request, player_id):
 		strikeouts=Sum('strikeouts')
 	)
 
+	career_pitching_stats = pitching_stats.aggregate(
+		games=Sum('games'),
+		games_started=Sum('games_started'),
+		wins=Sum('wins'),
+		losses=Sum('losses'),
+		innings_pitched=Sum('innings_pitched'),
+		strikeouts=Sum('strikeouts'),
+		bases_on_balls=Sum('bases_on_balls'),
+		hits=Sum('hits'),
+		saves=Sum('saves')
+	)
+
 	context = {
 		'player': player,
 		'batting_stats': batting_stats,
 		"pitching_stats": pitching_stats,
-		'career_batting_stats': career_batting_stats
+		'career_batting_stats': career_batting_stats,
+		'career_pitching_stats': career_pitching_stats
 	}
 
 	modal = render_to_string('modals/playerModal.html', context)

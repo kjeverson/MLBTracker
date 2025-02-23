@@ -7,104 +7,16 @@
             <div class="row p-1">
                 {% if batting_stats %}
                 <div class="col-12">
-                    <h5 class="text-center">Batting</h5>
-                    <table class="table table-sm table-dark text-center">
-                        <thead>
-                        <tr>
-                            <th>Season</th>
-                            <th>Team</th>
-                            <th>GP</th>
-                            <th>AB</th>
-                            <th>R</th>
-                            <th>H</th>
-                            <th>2B</th>
-                            <th>3B</th>
-                            <th>HR</th>
-                            <th>BB</th>
-                            <th>SO</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for entry in batting_stats %}
-                            <tr>
-                                <td>{{ entry.year }}</td>
-                                {% if entry.team == 'OVR' %}
-                                <td><img src="{% static 'img/MLB/' %}mlb.png" height="20px">Teams</td>
-                                {% else %}
-                                <td><img src="{% static 'img/MLB/' %}{{entry.team}}.png" height="20px"> {{ entry.team }}</td>
-                                {% endif %}
-                                <td>{{ entry.games }}</td>
-                                <td>{{ entry.at_bats }}</td>
-                                <td>{{ entry.runs }}</td>
-                                <td>{{ entry.hits }}</td>
-                                <td>{{ entry.doubles }}</td>
-                                <td>{{ entry.triples }}</td>
-                                <td>{{ entry.home_runs }}</td>
-                                <td>{{ entry.bases_on_balls }}</td>
-                                <td>{{ entry.strikeouts }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <th colspan="2">Career Totals</th>
-                            <th>{{ career_batting_stats.games }}</th>
-                            <th>{{ career_batting_stats.at_bats }}</th>
-                            <th>{{ career_batting_stats.runs }}</th>
-                            <th>{{ career_batting_stats.hits }}</th>
-                            <th>{{ career_batting_stats.doubles }}</th>
-                            <th>{{ career_batting_stats.triples }}</th>
-                            <th>{{ career_batting_stats.home_runs }}</th>
-                            <th>{{ career_batting_stats.bases_on_balls }}</th>
-                            <th>{{ career_batting_stats.strikeouts }}</th>
-                        </tr>
-                        </tfoot>
-                    </table>
+                    <h5 class="text-center light-caps">Batting</h5>
+                    {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats %}
                 </div>
                 {% endif %}
             </div>
             <div class="row">
                 {% if pitching_stats %}
                 <div class="col-12">
-                    <h5 class="text-center">Pitching</h5>
-                    <table class="table table-sm table-dark text-center">
-                        <thead>
-                        <tr>
-                            <th>Season</th>
-                            <th>Team</th>
-                            <th>GP</th>
-                            <th>GS</th>
-                            <th>W</th>
-                            <th>L</th>
-                            <th>IP</th>
-                            <th>K</th>
-                            <th>BB</th>
-                            <th>H</th>
-                            <th>SV</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for entry in pitching_stats %}
-                            <tr>
-                                <td>{{ entry.year }}</td>
-                                {% if entry.team == 'OVR' %}
-                                <td><img src="{% static 'img/MLB/' %}mlb.png" height="20px">Teams</td>
-                                {% else %}
-                                <td><img src="{% static 'img/MLB/' %}{{entry.team}}.png" height="20px"> {{ entry.team }}</td>
-                                {% endif %}
-                                <td>{{ entry.games }}</td>
-                                <td>{{ entry.games_started }}</td>
-                                <td>{{ entry.wins }}</td>
-                                <td>{{ entry.losses }}</td>
-                                <td>{{ entry.innings_pitched|floatformat:1 }}</td>
-                                <td>{{ entry.strikeouts }}</td>
-                                <td>{{ entry.bases_on_balls }}</td>
-                                <td>{{ entry.hits}}</td>
-                                <td>{{ entry.saves }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <h5 class="text-center light-caps">Pitching</h5>
+                    {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
                 </div>
                 {% endif %}
             </div>

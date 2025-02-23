@@ -1,0 +1,53 @@
+{% load static %}
+<table class="table table-sm table-dark text-center">
+    <thead>
+    <tr>
+        <th>Season</th>
+        <th>Team</th>
+        <th>GP</th>
+        <th>AB</th>
+        <th>R</th>
+        <th>H</th>
+        <th>2B</th>
+        <th>3B</th>
+        <th>HR</th>
+        <th>BB</th>
+        <th>SO</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for entry in stats %}
+        <tr>
+            <td>{{ entry.year }}</td>
+            {% if entry.team == 'OVR' %}
+            <td><img src="{% static 'img/MLB/' %}mlb.png" height="20px">Teams</td>
+            {% else %}
+            <td><img src="{% static 'img/MLB/' %}{{entry.team}}.png" height="20px"> {{ entry.team }}</td>
+            {% endif %}
+            <td>{{ entry.games }}</td>
+            <td>{{ entry.at_bats }}</td>
+            <td>{{ entry.runs }}</td>
+            <td>{{ entry.hits }}</td>
+            <td>{{ entry.doubles }}</td>
+            <td>{{ entry.triples }}</td>
+            <td>{{ entry.home_runs }}</td>
+            <td>{{ entry.bases_on_balls }}</td>
+            <td>{{ entry.strikeouts }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <th colspan="2">Career Totals</th>
+        <th>{{ career_stats.games }}</th>
+        <th>{{ career_stats.at_bats }}</th>
+        <th>{{ career_stats.runs }}</th>
+        <th>{{ career_stats.hits }}</th>
+        <th>{{ career_stats.doubles }}</th>
+        <th>{{ career_stats.triples }}</th>
+        <th>{{ career_stats.home_runs }}</th>
+        <th>{{ career_stats.bases_on_balls }}</th>
+        <th>{{ career_stats.strikeouts }}</th>
+    </tr>
+    </tfoot>
+</table>
