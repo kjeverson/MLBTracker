@@ -1,37 +1,89 @@
 $(document).ready(function() {
-    $.ajax({
-        url: '/api/players/',  // URL to Django API
+    fetch('/api/players/', {
         method: 'GET',
-        success: function(data) {
-            let html = '';
-            data.forEach(player => {
-                document.querySelector("#playerListBody").appendChild(createPlayerRow(player));
-            });
-            var search = document.getElementById("playerSearchBar");
-            search.addEventListener("input", (e) => {
-                var table = document.getElementById("playerListBody");
-                let searchValue = e.target.value.toLowerCase();
+    })
+    .then(response => response.json())
+    .then(data => {
+        let html = "";
+        data.forEach(player => {
+            document.querySelector("#playerListBody").appendChild(createPlayerRow(player));
+        });
+    })
+    .finally(() => {
+        activateSearchBar();
+        activatePositionSelector();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    })
+});
+
+function getSelectedPosition(){
+    var button = document.querySelector("#playerPositionSelector .btn:disabled");
+    return button.getAttribute("data-pos");
+}
+
+function clearSelected(buttons){
+    buttons.forEach(button => {
+        button.disabled = false;
+    })
+}
+
+function activatePositionSelector(){
+    var buttons = document.querySelectorAll("#playerPositionSelector .btn");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", function() {
+            clearSelected(buttons);
+            this.disabled = true;
+            const filterPosition = this.getAttribute("data-pos");
+
+            var table = document.getElementById("playerListBody");
+            if(filterPosition === 'ALL') {
                 for (let row of table.rows) {
-                    let name = row.getAttribute("data-name");
+                    if(row.getAttribute("hidden")) {
+                        row.removeAttribute("hidden");
+                    }
+                }
+            }
+            else {
+                for (let row of table.rows) {
+                    let position = row.getAttribute("data-pos");
                     if (row.getAttribute("hidden")) {
                         row.removeAttribute("hidden");
                     }
-                    if (!name.includes(searchValue)) {
+                    if (!filterPosition.includes(position)) {
                         row.setAttribute("hidden", "hidden");
                     }
                 }
-            })
-        },
-        error: function(error) {
-            console.error('Error:', error);
-        }
+            }
+        });
     });
-});
+}
+
+function activateSearchBar(){
+    var search = document.getElementById("playerSearchBar");
+    search.addEventListener("input", (e) => {
+        var table = document.getElementById("playerListBody");
+        let searchValue = e.target.value.toLowerCase();
+        let position = getSelectedPosition();
+        for (let row of table.rows) {
+            let name = row.getAttribute("data-name");
+            if (position.includes(row.getAttribute("data-pos")) || position === 'ALL' && row.getAttribute("hidden")) {
+                row.removeAttribute("hidden");
+            }
+            if (!name.includes(searchValue)) {
+                row.setAttribute("hidden", "hidden");
+            }
+        }
+    })
+}
 
 function createPlayerRow(player) {
     const tr = document.createElement("tr");
     tr.classList.add("p-0", "m-0");
     tr.dataset.name = `${player.name_full}`.toLowerCase();
+    tr.dataset.pos = `${player.position}`;
 
     const td = document.createElement("td");
     td.classList.add("p-0", "m-0");
