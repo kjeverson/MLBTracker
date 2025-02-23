@@ -1,0 +1,129 @@
+.prospect-row {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px; /* Increased border radius for smoother edges */
+    overflow: hidden; /* Hide overflow for rounded corners */
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.5); /* Larger and more pronounced shadow effect */
+}
+
+/* Ensure the player image is above the team logo */
+.pr-col-3.position-relative {
+    position: relative; /* Position this container relative to the rest of the layout */
+}
+
+.player-img {
+    z-index: 2; /* Ensure the player image is above the logo */
+    position: relative;
+}
+
+/* Style the team logo */
+.team-logo {
+    position: absolute; /* Position the logo absolutely within the column */
+    top: 10%; /* Adjust the vertical position as needed */
+    left: 65%; /* Center the logo horizontally */
+    z-index: 0; /* Put the logo behind the player image */
+    width: auto; /* Set width of the logo */
+    height: 100px; /* Maintain aspect ratio */
+}
+
+.modal-dialog {
+    border-radius: 20px; /* Increased border radius for smoother edges */
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.5); /* Larger and more pronounced shadow effect */
+}
+
+.modal-content {
+    background-color: #222; /* Darkened background color for depth */
+    border: none; /* Remove default border */
+}
+
+.modal-body {
+    padding: 40px; /* Increased padding for better spacing */
+}
+
+.modal-footer {
+    border-top: none; /* Remove default border */
+    background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent background for a subtle effect */
+}
+
+.btn.active {
+    border-radius: 20px; /* Increased border radius for smoother edges */
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3); /* Slightly lighter shadow effect */
+    transition: all 0.3s ease; /* Smooth transition on hover */
+}
+
+.btn.active:hover {
+    transform: translateY(-3px); /* Add a subtle lift effect on hover */
+}
+
+.modal-footer .btn-secondary {
+    background-color: #333; /* Darkened background color */
+    border-color: #333; /* Darkened border color */
+    transition: all 0.3s ease; /* Smooth transition on hover */
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #444; /* Darkened background color on hover */
+    border-color: #444; /* Darkened border color on hover */
+}
+
+.playerInformation h4 {
+    font-weight: 200;
+    text-transform: uppercase;
+    margin-bottom: 0;
+    font-style: italic;
+}
+
+.playerInformation h1 {
+    text-transform: uppercase;
+    margin-top: 0;
+    font-style: italic;
+}
+
+.playerInformation h6 {
+    font-weight: 200;
+    margin-bottom: 0;
+}
+
+.playerInformation small {
+    font-weight: 200;
+    margin-top: 0;
+}
+
+.light-caps{
+    font-weight: 200;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.caps {
+    text-transform: uppercase;
+    font-style: italic;
+}
+.gauge-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers vertically */
+    align-items: center;     /* Centers horizontally */
+    text-align: center;      /* Ensures text inside is centered */
+    height: 100%;            /* Makes sure the body takes the full height of the card */
+}
+
+.gauge {
+    display: grid;
+    place-items: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    font-size: 2rem;
+    background: conic-gradient(#{{ prospect.college_team.secondary_color }} 0% {{ prospect.grade if prospect.grade else 0}}%, #1e293b 12% 100%);
+}
+
+.gauge-inner {
+    display: grid;
+    place-items: center;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: var(--bs-dark);
+    color: white;
+    font-size: 1.5rem;
+}
