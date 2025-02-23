@@ -1,0 +1,40 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="" xmlns="http://www.w3.org/1999/html">
+<div class="row player-row" style="background:linear-gradient(to top, rgba(0,0,0,0) 20%, {{ player.team.primary_color }})">
+    <div class="col-3 position-relative">
+        <div class="img-container">
+            <img src="{% static 'img/headshots/' %}{{ player.id }}.png"
+                 onerror="this.src='{% static 'img/' %}default.png'"
+                 class="img-fluid player-img"
+            >
+            <img class="team-logo"
+                 src="{% static 'img/MLB/' %}{{ player.team.id }}.png"
+            >
+        </div>
+    </div>
+    <div class="col-4 d-flex align-items-center">
+        <div class="playerInformation">
+            <h4>{{ player.name_first }}</h4>
+            <h1>{{ player.name_last }}</h1>
+            <h6>{% if player.position %}<span class="badge bg-light text-dark">{{ player.get_position }}</span>{% endif %} {{ player.team.full_name }}</h6>
+            <small>
+                Height: {{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %} • Weight: {{ player.weight }} lbs <br>
+                Bats: {{ player.bats_long }} • Throws: {{ player.throws_long }}
+            </small>
+        </div>
+    </div>
+    <div class="col-2 d-flex justify-content-end align-items-center">
+        <div>
+            <h6 class="light-caps">HT/WT:</h6>
+            <h6 class="light-caps">Birthdate: </h6>
+            <h6 class="light-caps">BAT/THR: </h6>
+        </div>
+    </div>
+    <div class="col-3 d-flex justify-content-start align-items-center">
+        <div>
+            <h6 class="caps">{{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %}, {{ player.weight }} lbs</h6>
+            <h6 class="caps">{{ player.birth_date }} ({{ player.get_age }})</h6>
+            <h6 class="caps">{{ player.bats_long }}/{{ player.throws_long }}</h6>
+        </div>
+    </div>
+</div>

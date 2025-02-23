@@ -1,0 +1,28 @@
+{# playerList #}
+
+{% for player in players %}
+<tr class="p-0 m-0">
+    <td class="p-0 m-0" style="background: linear-gradient(to right, {{ player.team.primary_color }} 15%, rgba(0,0,0,0) 65%);">
+        <div class="row align-items-center prospect-table-row" style="overflow: hidden;">
+            <div class="ptr-team-logo-container">
+                <img src="{{ player.team.id|team_logo_path }}" alt="Team Logo"
+                     class="ptr-team-logo">
+            </div>
+            <div class="col-2 text-center">
+
+            </div>
+            <div class="col-9 pb-2" style="position: relative;">
+                <h6 style="text-transform: uppercase; margin-bottom: 0;">
+                    <i>{{ player.name_full }}</i>
+                </h6>
+                <small style="font-weight: 200; text-transform: uppercase; margin-top: 0;">
+                    <span class="badge bg-light text-dark">{{ player.get_position }}</span> {{ player.team.full_name }}
+                </small>
+            </div>
+            <div class="col-1 text-center">
+                <i type="button" class="bi bi-clipboard2-data-fill h4" onclick=""></i>
+            </div>
+        </div>
+    </td>
+</tr>
+{% endfor %}
