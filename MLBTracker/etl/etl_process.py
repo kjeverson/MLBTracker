@@ -131,6 +131,9 @@ def import_data(data):
 			if not created:
 				player.team = team
 				player.position = entry['primary_position']
+				player.weight = entry['weight']
+				player.height_feet = entry['height_feet']
+				player.height_inches = entry.get("height_inches")
 				player.save()
 
 			batting = entry['stats']['batting']
