@@ -493,6 +493,11 @@ def import_data(data):
 				player.height_inches = entry.get("height_inches")
 				player.save()
 
+			if player.name_full == 'Shohei Ohtani':
+				player.primary_position = "D"
+				player.secondary_position = "1"
+				player.save()
+
 			batting_entries = entry['stats']['batting']
 			pitching_entries = entry['stats']['pitching']
 
