@@ -16,7 +16,6 @@
                 <div class="col-12">
                     {% if career_pitching_stats %}
                     <h5 class="text-center light-caps">Pitching Statistics</h5>
-                    {{ career_pitching_stats }}
                     {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
                     {% endif %}
                 </div>

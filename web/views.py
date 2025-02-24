@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET
-from django.db.models import Sum
 from MLBTracker.models.player import Player
 
 
