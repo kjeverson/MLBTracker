@@ -95,7 +95,7 @@ function createPlayerRow(player) {
     td.style.background = `linear-gradient(to right, ${player.team.primary_color} 15%, rgba(0,0,0,0) 65%)`;
 
     const rowDiv = document.createElement("div");
-    rowDiv.classList.add("row", "align-items-center", "prospect-table-row");
+    rowDiv.classList.add("row", "align-items-center", "player-table-row");
     rowDiv.style.overflow = "hidden";
 
     const teamLogoContainer = document.createElement("div");
