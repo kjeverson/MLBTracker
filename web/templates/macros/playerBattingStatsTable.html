@@ -13,6 +13,9 @@
         <th>HR</th>
         <th>BB</th>
         <th>SO</th>
+        <th>AVG</th>
+        <th>SLG</th>
+        <th>BABIP</th>
     </tr>
     </thead>
     <tbody>
@@ -33,6 +36,9 @@
             <td>{{ entry.home_runs }}</td>
             <td>{{ entry.bases_on_balls }}</td>
             <td>{{ entry.strikeouts }}</td>
+            <td>{{ entry.batting_average }}</td>
+            <td>{{ entry.slugging_percentage }}</td>
+            <td>{{ entry.batting_balls_in_play }}</td>
         </tr>
         {% endfor %}
     </tbody>

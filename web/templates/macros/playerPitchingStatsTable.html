@@ -13,6 +13,11 @@
         <th>BB</th>
         <th>H</th>
         <th>SV</th>
+        <th>AVG</th>
+        <th>WHIP</th>
+        <th>WPCT</th>
+        <th>K/9</th>
+        <th>BB/9</th>
     </tr>
     </thead>
     <tbody>
@@ -33,6 +38,11 @@
             <td>{{ entry.bases_on_balls }}</td>
             <td>{{ entry.hits}}</td>
             <td>{{ entry.saves }}</td>
+            <td>{{ entry.batting_average }}</td>
+            <td>{{ entry.whip }}</td>
+            <td>{{ entry.win_percentage }}</td>
+            <td>{{ entry.k9 }}</td>
+            <td>{{ entry.bb9 }}</td>
         </tr>
         {% endfor %}
     </tbody>

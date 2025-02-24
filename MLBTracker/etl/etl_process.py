@@ -4,6 +4,7 @@ import datetime
 from MLBTracker.models.player import Player
 from MLBTracker.models.statistics import Batting, Pitching
 from MLBTracker.models.team import Team
+from MLBTracker.etl.statistic_functions import batting, pitching
 
 
 def get_team_data():
@@ -47,60 +48,97 @@ def load_json_data(file_path):
 
 def import_batting_stats(player, batting_stats):
 	for entry in batting_stats:
+
+		at_bats = entry.get("at_bats", 0)
+		hits = entry.get('hits', 0)
+		doubles = entry.get('doubles', 0)
+		triples = entry.get('triples', 0)
+		home_runs = entry.get('home_runs', 0)
+		strikeouts = entry.get('strikeouts', 0)
+		sacrifice_flies = entry.get('sacrifice_flies', 0)
+
+		singles = batting.calculate_singles(hits, doubles, triples, home_runs)
+		batting_average = batting.calculate_batting_average(hits, at_bats)
+		slugging_percentage = batting.calculate_slugging_percentage(singles, doubles, triples,
+																	home_runs, at_bats)
+		batting_balls_in_play = batting.calculate_batting_balls_in_play(hits, home_runs, at_bats,
+																		strikeouts, sacrifice_flies)
+
 		Batting.objects.update_or_create(
 			player=player,
 			year=entry['year'],
 			league=entry['league'],
 			team=entry["org_abbreviation"],
 			defaults={
-				'plate_appearances': entry['plate_appearances'],
-				'at_bats': entry['at_bats'],
-				'games': entry['games'],
-				'games_started': entry['games_started'],
-				'runs': entry['runs'],
-				'hits': entry['hits'],
-				'doubles': entry['doubles'],
-				'triples': entry['triples'],
-				'home_runs': entry['home_runs'],
-				'bases_on_balls': entry['bases_on_balls'],
-				'strikeouts': entry['strikeouts'],
-				'sacrifices': entry['sacrifices'],
-				'sacrifice_flies': entry['sacrifice_flies'],
-				'stolen_bases': entry['stolen_bases'],
-				'caught_stealing': entry['caught_stealing']
+				'plate_appearances': entry.get('plate_appearances'),
+				'at_bats': at_bats,
+				'games': entry.get('games'),
+				'games_started': entry.get('games_started'),
+				'runs': entry.get('runs'),
+				'hits': hits,
+				'singles': singles,
+				'doubles': doubles,
+				'triples': triples,
+				'home_runs': home_runs,
+				'bases_on_balls': entry.get('bases_on_balls'),
+				'strikeouts': strikeouts,
+				'sacrifices': entry.get('sacrifices'),
+				'sacrifice_flies': sacrifice_flies,
+				'stolen_bases': entry.get('stolen_bases'),
+				'caught_stealing': entry.get('caught_stealing'),
+				'batting_average': batting_average,
+				'slugging_percentage': slugging_percentage,
+				'batting_balls_in_play': batting_balls_in_play
 			}
 		)
 
 
 def import_pitching_stats(player, pitching_stats):
 	for entry in pitching_stats:
-		try:
-			Pitching.objects.update_or_create(
-				player=player,
-				year=entry["year"],
-				league=entry["league"],
-				team=entry["org_abbreviation"],
-				defaults={
-					'games': entry["games"],
-					'games_started': entry["games_started"],
-					'complete_games': entry["complete_games"],
-					'games_finished': entry["games_finished"],
-					'innings_pitched': entry["innings_pitched"],
-					'wins': entry["wins"],
-					'losses': entry["losses"],
-					'saves': entry["saves"],
-					'total_batters_faced': entry["total_batters_faced"],
-					'at_bats': entry["at_bats"],
-					'hits': entry["hits"],
-					'doubles': entry["doubles"],
-					'triples': entry["triples"],
-					'home_runs': entry["home_runs"],
-					'bases_on_balls': entry["bases_on_balls"],
-					'strikeouts': entry["strikeouts"]
-				}
-			)
-		except Exception as e:
-			print(e)
+
+		at_bats = entry.get('at_bats', 0)
+		hits = entry.get('hits', 0)
+		walks = entry.get('bases_on_balls', 0)
+		innings_pitched = entry.get('innings_pitched', 0)
+		wins = entry.get('wins', 0)
+		losses = entry.get('losses', 0)
+		strikeouts = entry.get('strikeouts', 0)
+
+		batting_average = batting.calculate_batting_average(hits, at_bats)
+		whip = pitching.calculate_whip(hits, walks, innings_pitched)
+		win_percentage = pitching.calculate_win_percentage(wins, losses)
+		k9 = pitching.calculate_k9(strikeouts, innings_pitched)
+		bb9 = pitching.calculate_bb9(walks, innings_pitched)
+
+		Pitching.objects.update_or_create(
+			player=player,
+			year=entry["year"],
+			league=entry["league"],
+			team=entry["org_abbreviation"],
+			defaults={
+				'games': entry.get("games"),
+				'games_started': entry.get("games_started"),
+				'complete_games': entry.get("complete_games"),
+				'games_finished': entry.get("games_finished"),
+				'innings_pitched': innings_pitched,
+				'wins': wins,
+				'losses': losses,
+				'saves': entry.get("saves"),
+				'total_batters_faced': entry.get("total_batters_faced"),
+				'at_bats': at_bats,
+				'hits': hits,
+				'doubles': entry.get("doubles"),
+				'triples': entry.get("triples"),
+				'home_runs': entry.get("home_runs"),
+				'bases_on_balls': walks,
+				'strikeouts': strikeouts,
+				'batting_average': batting_average,
+				'whip': whip,
+				'win_percentage': win_percentage,
+				'k9': k9,
+				'bb9': bb9
+			}
+		)
 
 
 def import_data(data):
@@ -148,7 +186,7 @@ def import_data(data):
 				import_pitching_stats(player, pitching)
 
 		except Exception as e:
-			print(e)
+			print(e, player.name_full)
 
 	print(f"Imported {len(data)} players into the database.")
 

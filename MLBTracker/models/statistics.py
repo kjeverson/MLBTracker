@@ -8,12 +8,14 @@ class Batting(models.Model):
 	year = models.IntegerField(null=False)
 	league = models.CharField(max_length=2, null=True, blank=True)
 	team = models.CharField(max_length=3, null=False)
+
 	plate_appearances = models.IntegerField(null=False, default=0)
 	at_bats = models.IntegerField(null=False, default=0)
 	games = models.IntegerField(null=False, default=0)
 	games_started = models.IntegerField(null=False, default=0)
 	runs = models.IntegerField(null=False, default=0)
 	hits = models.IntegerField(null=False, default=0)
+	singles = models.IntegerField(null=False, default=0)
 	doubles = models.IntegerField(null=False, default=0)
 	triples = models.IntegerField(null=False, default=0)
 	home_runs = models.IntegerField(null=False, default=0)
@@ -23,6 +25,10 @@ class Batting(models.Model):
 	sacrifice_flies = models.IntegerField(null=False, default=0)
 	stolen_bases = models.IntegerField(null=False, default=0)
 	caught_stealing = models.IntegerField(null=False, default=0)
+
+	batting_average = models.DecimalField(max_digits=4, decimal_places=3, default=0)
+	slugging_percentage = models.DecimalField(max_digits=4, decimal_places=3, default=0)
+	batting_balls_in_play = models.DecimalField(max_digits=4, decimal_places=3, default=0)
 
 	def __str__(self):
 		return f"{self.player.name_full} - {self.year}"
@@ -34,6 +40,7 @@ class Pitching(models.Model):
 	year = models.IntegerField(null=False)
 	league = models.CharField(max_length=2, null=True, blank=True)
 	team = models.CharField(max_length=3, null=False)
+
 	games = models.IntegerField(null=False, default=0)
 	games_started = models.IntegerField(null=False, default=0)
 	complete_games = models.IntegerField(null=False, default=0)
@@ -50,6 +57,12 @@ class Pitching(models.Model):
 	home_runs = models.IntegerField(null=False, default=0)
 	bases_on_balls = models.IntegerField(null=False, default=0)
 	strikeouts = models.IntegerField(null=False, default=0)
+
+	batting_average = models.DecimalField(max_digits=4, decimal_places=3, default=0)
+	whip = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+	win_percentage = models.DecimalField(max_digits=4, decimal_places=3, default=0)
+	k9 = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+	bb9 = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 
 	def __str__(self):
 		return f"{self.player.name_full} - {self.year}"
