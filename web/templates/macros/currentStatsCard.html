@@ -1,0 +1,36 @@
+{% if stats %}
+<div class="card border-0 w-100">
+    <h6 class="card-header text-center" style="background: {{ player.team.secondary_color }}; color: {{ player.team.primary_color }}">{{ stats.year }} Season Stats</h6>
+    <div class="card-body">
+        <div class="row text-center">
+            {% if player.primary_position == '1' %}
+            <div class="col-4">
+                <h2>{{ stats.wins }}-{{ stats.losses }}</h2>
+                <small class="light-caps">W-L</small>
+            </div>
+            <div class="col-4">
+                <h2>{{ stats.strikeouts }}</h2>
+                <small class="light-caps">K</small>
+            </div>
+            <div class="col-4">
+                <h2>{{ stats.whip }}</h2>
+                <small class="light-caps">WHIP</small>
+            </div>
+            {% else %}
+            <div class="col-4">
+                <h2>{{ stats.batting_average }}</h2>
+                <small class="light-caps">AVG</small>
+            </div>
+            <div class="col-4">
+                <h2>{{ stats.home_runs }}</h2>
+                <small class="light-caps">HR</small>
+            </div>
+            <div class="col-4">
+                <h2>{{ stats.slugging_percentage }}</h2>
+                <small class="light-caps">SLG%</small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}

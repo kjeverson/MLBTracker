@@ -18,23 +18,16 @@
             <h1>{{ player.name_last }}</h1>
             <h6>{% if player.primary_position %}<span class="badge bg-light text-dark">{{ player.get_primary_position }}{% if player.secondary_position %}/{{ player.get_secondary_position }}{% endif %}</span>{% endif %} {{ player.team.full_name }}</h6>
             <small>
-                Height: {{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %} • Weight: {{ player.weight }} lbs <br>
+                Height: {{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %} • Weight: {{ player.weight }} • Age: {{ player.get_age }} </br>
                 Bats: {{ player.bats_long }} • Throws: {{ player.throws_long }}
             </small>
         </div>
     </div>
-    <div class="col-2 d-flex justify-content-end align-items-center">
-        <div>
-            <h6 class="light-caps">HT/WT:</h6>
-            <h6 class="light-caps">Birthdate: </h6>
-            <h6 class="light-caps">BAT/THR: </h6>
-        </div>
-    </div>
-    <div class="col-3 d-flex justify-content-start align-items-center">
-        <div>
-            <h6 class="caps">{{ player.height_feet }}' {% if player.height_inches %}{{ player.height_inches }}"{% endif %}, {{ player.weight }} lbs</h6>
-            <h6 class="caps">{{ player.birth_date }} ({{ player.get_age }})</h6>
-            <h6 class="caps">{{ player.bats_long }}/{{ player.throws_long }}</h6>
-        </div>
+    <div class="col-5 d-flex justify-content-center align-items-center">
+        {% if player.primary_position == '1' %}
+        {% include 'macros/currentStatsCard.html' with player=player stats=current_pitching_stats %}
+        {% else %}
+        {% include 'macros/currentStatsCard.html' with player=player stats=current_batting_stats %}
+        {% endif %}
     </div>
 </div>

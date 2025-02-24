@@ -5,17 +5,17 @@
             {% load static %}
             {% include 'macros/playerInfoCard.html' with player=player %}
             <div class="row p-1">
-                {% if batting_stats %}
+                {% if career_batting_stats.games %}
                 <div class="col-12">
-                    <h5 class="text-center light-caps">Batting</h5>
+                    <h5 class="text-center light-caps">Batting Statistics</h5>
                     {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats %}
                 </div>
                 {% endif %}
             </div>
             <div class="row">
-                {% if pitching_stats %}
+                {% if career_pitching_stats.games %}
                 <div class="col-12">
-                    <h5 class="text-center light-caps">Pitching</h5>
+                    <h5 class="text-center light-caps">Pitching Statistics</h5>
                     {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
                 </div>
                 {% endif %}
