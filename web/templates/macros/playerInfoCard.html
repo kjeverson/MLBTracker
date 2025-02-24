@@ -25,9 +25,17 @@
     </div>
     <div class="col-5 d-flex justify-content-center align-items-center">
         {% if player.primary_position == '1' %}
-        {% include 'macros/currentStatsCard.html' with player=player stats=current_pitching_stats %}
+            {% if current_pitching_stats.year != 2024 %}
+            {% include 'macros/currentStatsCard.html' with player=player stats=career_pitching_stats %}
+            {% else %}
+            {% include 'macros/currentStatsCard.html' with player=player stats=current_pitching_stats %}
+            {% endif %}
         {% else %}
-        {% include 'macros/currentStatsCard.html' with player=player stats=current_batting_stats %}
+            {% if current_batting_stats.year != 2024 %}
+            {% include 'macros/currentStatsCard.html' with player=player stats=career_batting_stats %}
+            {% else %}
+            {% include 'macros/currentStatsCard.html' with player=player stats=current_batting_stats %}
+            {% endif %}
         {% endif %}
     </div>
 </div>

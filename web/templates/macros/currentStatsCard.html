@@ -1,6 +1,12 @@
 {% if stats %}
 <div class="card border-0 w-100">
-    <h6 class="card-header text-center" style="background: {{ player.team.secondary_color }}; color: {{ player.team.primary_color }}">{{ stats.year }} Season Stats</h6>
+    <h6 class="card-header text-center" style="background: {{ player.team.secondary_color }}; color: {{ player.team.primary_color }}">
+        {% if stats.team == 'TOT' %}
+        Career Stats
+        {% else %}
+        {{ stats.year }} Season Stats
+        {% endif %}
+    </h6>
     <div class="card-body">
         <div class="row text-center">
             {% if player.primary_position == '1' %}

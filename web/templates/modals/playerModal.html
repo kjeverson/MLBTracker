@@ -5,28 +5,21 @@
             {% load static %}
             {% include 'macros/playerInfoCard.html' with player=player %}
             <div class="row p-1">
-                {% if career_batting_stats.games %}
                 <div class="col-12">
+                    {% if career_batting_stats %}
                     <h5 class="text-center light-caps">Batting Statistics</h5>
                     {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats %}
+                    {% endif %}
                 </div>
-                {% elif player.primary_position != '1' %}
-                <div class="col-12">
-                    <h5 class="text-center light-caps">No Batting Statistics Available</h5>
-                </div>
-                {% endif %}
             </div>
             <div class="row">
-                {% if career_pitching_stats.games %}
                 <div class="col-12">
+                    {% if career_pitching_stats %}
                     <h5 class="text-center light-caps">Pitching Statistics</h5>
+                    {{ career_pitching_stats }}
                     {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
+                    {% endif %}
                 </div>
-                {% elif player.primary_position == '1' %}
-                <div class="col-12">
-                    <h5 class="text-center light-caps">No Pitching Statistics Available</h5>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>
