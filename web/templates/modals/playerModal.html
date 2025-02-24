@@ -4,19 +4,29 @@
         <div class="modal-body bg-dark">
             {% load static %}
             {% include 'macros/playerInfoCard.html' with player=player %}
-            <div class="row p-1">
+            <div class="row p-1 m-1 justify-content-center">
+                <div class="col-6">
+                    <div class="btn-group w-100" role="group">
+                      <button id="pitchingBtn" type="button" class="btn btn-secondary light-caps" {% if player.primary_position == '1' %}disabled{% endif %} onclick="toggleStats(true)">Pitching</button>
+                      <button id="battingBtn" type="button" class="btn btn-secondary light-caps"  {% if player.primary_position != '1' %}disabled{% endif %} onclick="toggleStats(false)">Batting</button>
+                    </div>
+                </div>
+            </div>
+            <div id="modalBattingStats" class="row p-1 m-1 {% if player.primary_position == '1' %}visually-hidden{% endif %}">
                 <div class="col-12">
                     {% if career_batting_stats %}
-                    <h5 class="text-center light-caps">Batting Statistics</h5>
                     {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats %}
+                    {% else %}
+                    <h5 class="light-caps text-center"> No Batting Statistics Available </h5>
                     {% endif %}
                 </div>
             </div>
-            <div class="row">
+            <div id="modalPitchingStats" class="row p-1 m-1 {% if player.primary_position != '1' %}visually-hidden{% endif %}">
                 <div class="col-12">
                     {% if career_pitching_stats %}
-                    <h5 class="text-center light-caps">Pitching Statistics</h5>
                     {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
+                    {% else %}
+                    <h5 class="light-caps text-center"> No Pitching Statistics Available </h5>
                     {% endif %}
                 </div>
             </div>
