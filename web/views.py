@@ -23,7 +23,9 @@ def get_player_modal(request, player_id):
 		'career_batting_stats': player.batting.filter(team='TOT').first(),
 		'career_pitching_stats': player.pitching.filter(team='TOT').first(),
 		'current_pitching_stats': pitching_stats.first(),
-		'current_batting_stats': batting_stats.first()
+		'current_batting_stats': batting_stats.first(),
+		'aggregated_pitching_years': player.get_aggregated_years(pitching=True),
+		'aggregated_batting_years': player.get_aggregated_years(pitching=False)
 	}
 
 	modal = render_to_string('modals/playerModal.html', context)

@@ -83,3 +83,9 @@ class Player(models.Model):
 			age -= 1
 
 		return age
+
+	def get_aggregated_years(self, pitching=False):
+		if pitching:
+			return list(self.pitching.filter(team="OVR").values_list('year', flat=True).distinct())
+		else:
+			return list(self.batting.filter(team="OVR").values_list('year', flat=True).distinct())

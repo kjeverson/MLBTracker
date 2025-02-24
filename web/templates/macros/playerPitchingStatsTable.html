@@ -22,6 +22,9 @@
     </thead>
     <tbody>
         {% for entry in stats %}
+        {% if entry.year in aggregated_years and entry.team != 'OVR' %}
+
+        {% else %}
         <tr>
             <td>{{ entry.year }}</td>
             {% if entry.teams > 1 %}
@@ -44,6 +47,7 @@
             <td>{{ entry.k9 }}</td>
             <td>{{ entry.bb9 }}</td>
         </tr>
+        {% endif %}
         {% endfor %}
     </tbody>
     <tfoot>

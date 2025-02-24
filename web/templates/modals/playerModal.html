@@ -15,7 +15,7 @@
             <div id="modalBattingStats" class="row p-1 m-1 {% if player.primary_position == '1' %}visually-hidden{% endif %}">
                 <div class="col-12">
                     {% if career_batting_stats %}
-                    {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats %}
+                    {% include 'macros/playerBattingStatsTable.html' with stats=batting_stats career_stats=career_batting_stats aggregated_years=aggregated_batting_years %}
                     {% else %}
                     <h5 class="light-caps text-center"> No Batting Statistics Available </h5>
                     {% endif %}
@@ -24,7 +24,7 @@
             <div id="modalPitchingStats" class="row p-1 m-1 {% if player.primary_position != '1' %}visually-hidden{% endif %}">
                 <div class="col-12">
                     {% if career_pitching_stats %}
-                    {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats %}
+                    {% include 'macros/playerPitchingStatsTable.html' with stats=pitching_stats career_stats=career_pitching_stats aggregated_years=aggregated_pitching_years %}
                     {% else %}
                     <h5 class="light-caps text-center"> No Pitching Statistics Available </h5>
                     {% endif %}
