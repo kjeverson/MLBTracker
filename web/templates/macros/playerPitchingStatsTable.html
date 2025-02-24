@@ -24,8 +24,8 @@
         {% for entry in stats %}
         <tr>
             <td>{{ entry.year }}</td>
-            {% if entry.team == 'OVR' %}
-            <td><img src="{% static 'img/MLB/' %}mlb.png" height="20px">Teams</td>
+            {% if entry.teams > 1 %}
+            <td><img src="{% static 'img/MLB/' %}mlb.png" height="20px"> {{entry.teams}} Teams</td>
             {% else %}
             <td><img src="{% static 'img/MLB/' %}{{entry.team}}.png" height="20px"> {{ entry.team }}</td>
             {% endif %}

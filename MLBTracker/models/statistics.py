@@ -8,6 +8,7 @@ class Batting(models.Model):
 	year = models.IntegerField(null=False)
 	league = models.CharField(max_length=2, null=True, blank=True)
 	team = models.CharField(max_length=3, null=False)
+	teams = models.IntegerField(null=False, default=1)
 
 	plate_appearances = models.IntegerField(null=False, default=0)
 	at_bats = models.IntegerField(null=False, default=0)
@@ -40,6 +41,7 @@ class Pitching(models.Model):
 	year = models.IntegerField(null=False)
 	league = models.CharField(max_length=2, null=True, blank=True)
 	team = models.CharField(max_length=3, null=False)
+	teams = models.IntegerField(null=False, default=1)
 
 	games = models.IntegerField(null=False, default=0)
 	games_started = models.IntegerField(null=False, default=0)

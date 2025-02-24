@@ -13,7 +13,7 @@ def home(request):
 @require_GET
 def get_player_modal(request, player_id):
 	player = Player.objects.get(id=player_id)
-	batting_stats = player.batting.all().exclude(team='OVR').order_by('-year')
+	batting_stats = player.batting.all().order_by('-year')
 	pitching_stats = player.pitching.all().order_by('-year')
 
 	career_batting_stats = []
