@@ -22,3 +22,7 @@ def calculate_bb9(walks, ip):
     if ip > 0:
         return (walks / ip) * 9
     return 0
+
+
+def get_innings_pitched(innings, innings_outs):
+    return float(f'{innings}.{innings_outs}')

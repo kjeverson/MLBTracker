@@ -49,61 +49,76 @@ def load_json_data(file_path):
 		return json.load(file)
 
 
-def import_batting_stats(player, batting_stats):
-	yearly_entries = defaultdict(list)
+def aggregate_career_batting_stats(player):
+	stats = player.batting.all().exclude(team='OVR').order_by('-year')
 
-	for entry in batting_stats:
+	if not stats.exists():
+		return
 
-		# Skip Aggregated Seasons, as we re-aggregate later
-		if entry['org_abbreviation'] == 'OVR':
-			continue
+	latest = stats.first()
 
-		year = entry['year']
-		yearly_entries[year].append(entry)
+	career_batting_stats = stats.aggregate(
+		teams=Sum('teams') or 0,
+		plate_appearances=Sum('plate_appearances') or 0,
+		at_bats=Sum('at_bats') or 0,
+		games=Sum('games') or 0,
+		games_started=Sum('games_started') or 0,
+		runs=Sum('runs') or 0,
+		hits=Sum('hits') or 0,
+		singles=Sum('singles') or 0,
+		doubles=Sum('doubles') or 0,
+		triples=Sum('triples') or 0,
+		home_runs=Sum('home_runs') or 0,
+		bases_on_balls=Sum('bases_on_balls') or 0,
+		strikeouts=Sum('strikeouts') or 0,
+		sacrifices=Sum('sacrifices') or 0,
+		sacrifice_flies=Sum('sacrifice_flies') or 0,
+		stolen_bases=Sum('stolen_bases') or 0,
+		caught_stealing=Sum('caught_stealing') or 0
+	)
 
-		at_bats = entry.get("at_bats", 0)
-		hits = entry.get('hits', 0)
-		doubles = entry.get('doubles', 0)
-		triples = entry.get('triples', 0)
-		home_runs = entry.get('home_runs', 0)
-		strikeouts = entry.get('strikeouts', 0)
-		sacrifice_flies = entry.get('sacrifice_flies', 0)
+	batting_average = batting.calculate_batting_average(
+		career_batting_stats['hits'], career_batting_stats['at_bats'])
+	slugging_percentage = batting.calculate_slugging_percentage(
+		career_batting_stats['singles'], career_batting_stats['doubles'],
+		career_batting_stats['triples'], career_batting_stats['home_runs'],
+		career_batting_stats['at_bats'])
+	batting_balls_in_play = batting.calculate_batting_balls_in_play(
+		career_batting_stats['hits'], career_batting_stats['home_runs'],
+		career_batting_stats['at_bats'], career_batting_stats['strikeouts'],
+		career_batting_stats['sacrifice_flies'])
 
-		singles = batting.calculate_singles(hits, doubles, triples, home_runs)
-		batting_average = batting.calculate_batting_average(hits, at_bats)
-		slugging_percentage = batting.calculate_slugging_percentage(
-			singles, doubles, triples, home_runs, at_bats)
-		batting_balls_in_play = batting.calculate_batting_balls_in_play(
-			hits, home_runs, at_bats, strikeouts, sacrifice_flies)
+	Batting.objects.update_or_create(
+		player=player,
+		year=latest.year,
+		league=None,
+		team="TOT",
+		teams=career_batting_stats['teams'],
+		defaults={
+			'plate_appearances': career_batting_stats["plate_appearances"],
+			'at_bats': career_batting_stats["at_bats"],
+			'games': career_batting_stats["games"],
+			'games_started': career_batting_stats["games_started"],
+			'runs': career_batting_stats["runs"],
+			'hits': career_batting_stats["hits"],
+			'singles': career_batting_stats["singles"],
+			'doubles': career_batting_stats["doubles"],
+			'triples': career_batting_stats["triples"],
+			'home_runs': career_batting_stats["home_runs"],
+			'bases_on_balls': career_batting_stats["bases_on_balls"],
+			'strikeouts': career_batting_stats["strikeouts"],
+			'sacrifices': career_batting_stats["sacrifices"],
+			'sacrifice_flies': career_batting_stats["sacrifice_flies"],
+			'stolen_bases': career_batting_stats["stolen_bases"],
+			'caught_stealing': career_batting_stats["caught_stealing"],
+			'batting_average': batting_average,
+			'slugging_percentage': slugging_percentage,
+			'batting_balls_in_play': batting_balls_in_play
+		}
+	)
 
-		Batting.objects.update_or_create(
-			player=player,
-			year=entry['year'],
-			league=entry['league'],
-			team=entry["org_abbreviation"],
-			defaults={
-				'plate_appearances': entry.get('plate_appearances'),
-				'at_bats': at_bats,
-				'games': entry.get('games'),
-				'games_started': entry.get('games_started'),
-				'runs': entry.get('runs'),
-				'hits': hits,
-				'singles': singles,
-				'doubles': doubles,
-				'triples': triples,
-				'home_runs': home_runs,
-				'bases_on_balls': entry.get('bases_on_balls'),
-				'strikeouts': strikeouts,
-				'sacrifices': entry.get('sacrifices'),
-				'sacrifice_flies': sacrifice_flies,
-				'stolen_bases': entry.get('stolen_bases'),
-				'caught_stealing': entry.get('caught_stealing'),
-				'batting_average': batting_average,
-				'slugging_percentage': slugging_percentage,
-				'batting_balls_in_play': batting_balls_in_play
-			}
-		)
 
+def aggregate_batting_stats(player, yearly_entries):
 	duplicate_years = [key for key, entries in yearly_entries.items() if len(entries) > 1]
 
 	for year in duplicate_years:
@@ -169,6 +184,216 @@ def import_batting_stats(player, batting_stats):
 		)
 
 
+def import_batting_stats(player, batting_stats):
+	yearly_entries = defaultdict(list)
+
+	for entry in batting_stats:
+
+		# Skip Aggregated Seasons, as we re-aggregate later
+		if entry['org_abbreviation'] == 'OVR':
+			continue
+
+		year = entry['year']
+		yearly_entries[year].append(entry)
+
+		at_bats = entry.get("at_bats", 0)
+		hits = entry.get('hits', 0)
+		doubles = entry.get('doubles', 0)
+		triples = entry.get('triples', 0)
+		home_runs = entry.get('home_runs', 0)
+		strikeouts = entry.get('strikeouts', 0)
+		sacrifice_flies = entry.get('sacrifice_flies', 0)
+
+		singles = batting.calculate_singles(hits, doubles, triples, home_runs)
+		batting_average = batting.calculate_batting_average(hits, at_bats)
+		slugging_percentage = batting.calculate_slugging_percentage(
+			singles, doubles, triples, home_runs, at_bats)
+		batting_balls_in_play = batting.calculate_batting_balls_in_play(
+			hits, home_runs, at_bats, strikeouts, sacrifice_flies)
+
+		Batting.objects.update_or_create(
+			player=player,
+			year=entry['year'],
+			league=entry['league'],
+			team=entry["org_abbreviation"],
+			defaults={
+				'plate_appearances': entry.get('plate_appearances'),
+				'at_bats': at_bats,
+				'games': entry.get('games'),
+				'games_started': entry.get('games_started'),
+				'runs': entry.get('runs'),
+				'hits': hits,
+				'singles': singles,
+				'doubles': doubles,
+				'triples': triples,
+				'home_runs': home_runs,
+				'bases_on_balls': entry.get('bases_on_balls'),
+				'strikeouts': strikeouts,
+				'sacrifices': entry.get('sacrifices'),
+				'sacrifice_flies': sacrifice_flies,
+				'stolen_bases': entry.get('stolen_bases'),
+				'caught_stealing': entry.get('caught_stealing'),
+				'batting_average': batting_average,
+				'slugging_percentage': slugging_percentage,
+				'batting_balls_in_play': batting_balls_in_play
+			}
+		)
+
+	aggregate_batting_stats(player, yearly_entries)
+	aggregate_career_batting_stats(player)
+
+
+def aggregate_career_pitching_stats(player):
+	stats = player.pitching.all().exclude(team='OVR').order_by('-year')
+	if not stats.exists():
+		return
+
+	latest = stats.first()
+
+	aggregated_stats = stats.aggregate(
+		total_teams=Sum("teams"),
+		total_games=Sum("games") or 0,
+		total_games_started=Sum("games_started") or 0,
+		total_complete_games=Sum("complete_games") or 0,
+		total_games_finished=Sum("games_finished") or 0,
+		total_innings=Sum("innings") or 0,
+		total_innings_outs=Sum("innings_outs") or 0,
+		total_wins=Sum("wins") or 0,
+		total_losses=Sum("losses") or 0,
+		total_saves=Sum("saves") or 0,
+		total_batters_faced=Sum("total_batters_faced") or 0,
+		total_at_bats=Sum("at_bats") or 0,
+		total_hits=Sum("hits") or 0,
+		total_doubles=Sum("doubles") or 0,
+		total_triples=Sum("triples") or 0,
+		total_home_runs=Sum("home_runs") or 0,
+		total_bases_on_balls=Sum("bases_on_balls") or 0,
+		total_strikeouts=Sum("strikeouts") or 0,
+	)
+
+	# Calculated stats for aggregated season stats
+	total_innings_pitched = pitching.get_innings_pitched(
+		aggregated_stats['total_innings'], aggregated_stats['total_innings_outs'])
+
+	batting_average = batting.calculate_batting_average(
+		aggregated_stats["total_hits"], aggregated_stats["total_at_bats"])
+	whip = pitching.calculate_whip(
+		aggregated_stats['total_hits'], aggregated_stats['total_bases_on_balls'],
+		total_innings_pitched)
+	win_percentage = pitching.calculate_win_percentage(
+		aggregated_stats['total_wins'], aggregated_stats['total_losses'])
+	k9 = pitching.calculate_k9(
+		aggregated_stats['total_strikeouts'], total_innings_pitched)
+	bb9 = pitching.calculate_bb9(
+		aggregated_stats['total_bases_on_balls'], total_innings_pitched)
+
+	Pitching.objects.update_or_create(
+		player=player,
+		year=latest.year,
+		league=None,
+		team="TOT",
+		teams=aggregated_stats["total_teams"],
+		defaults={
+			"games": aggregated_stats["total_games"],
+			"games_started": aggregated_stats["total_games_started"],
+			"complete_games": aggregated_stats["total_complete_games"],
+			"games_finished": aggregated_stats["total_games_finished"],
+			"innings": aggregated_stats["total_innings"],
+			"innings_outs": aggregated_stats["total_innings_outs"],
+			"wins": aggregated_stats["total_wins"],
+			"losses": aggregated_stats["total_losses"],
+			"saves": aggregated_stats["total_saves"],
+			"total_batters_faced": aggregated_stats["total_batters_faced"],
+			"at_bats": aggregated_stats["total_at_bats"],
+			"hits": aggregated_stats["total_hits"],
+			"doubles": aggregated_stats["total_doubles"],
+			"triples": aggregated_stats["total_triples"],
+			"home_runs": aggregated_stats["total_home_runs"],
+			"bases_on_balls": aggregated_stats["total_bases_on_balls"],
+			"strikeouts": aggregated_stats["total_strikeouts"],
+			"batting_average": batting_average,
+			"whip": whip,
+			"win_percentage": win_percentage,
+			"k9": k9,
+			"bb9": bb9
+		},
+	)
+
+
+def aggregate_pitching_stats(player, yearly_entries):
+	duplicate_years = [key for key, entries in yearly_entries.items() if len(entries) > 1]
+
+	for year in duplicate_years:
+		aggregated_stats = Pitching.objects.filter(player=player, year=year).aggregate(
+			total_teams=Sum("teams"),
+			total_games=Sum("games") or 0,
+			total_games_started=Sum("games_started") or 0,
+			total_complete_games=Sum("complete_games") or 0,
+			total_games_finished=Sum("games_finished") or 0,
+			total_innings=Sum("innings") or 0,
+			total_innings_outs=Sum("innings_outs") or 0,
+			total_wins=Sum("wins") or 0,
+			total_losses=Sum("losses") or 0,
+			total_saves=Sum("saves") or 0,
+			total_batters_faced=Sum("total_batters_faced") or 0,
+			total_at_bats=Sum("at_bats") or 0,
+			total_hits=Sum("hits") or 0,
+			total_doubles=Sum("doubles") or 0,
+			total_triples=Sum("triples") or 0,
+			total_home_runs=Sum("home_runs") or 0,
+			total_bases_on_balls=Sum("bases_on_balls") or 0,
+			total_strikeouts=Sum("strikeouts") or 0,
+		)
+
+		# Calculated stats for aggregated season stats
+		total_innings_pitched = pitching.get_innings_pitched(
+			aggregated_stats['total_innings'], aggregated_stats['total_innings_outs'])
+
+		batting_average = batting.calculate_batting_average(
+			aggregated_stats["total_hits"], aggregated_stats["total_at_bats"])
+		whip = pitching.calculate_whip(
+			aggregated_stats['total_hits'], aggregated_stats['total_bases_on_balls'],
+			total_innings_pitched)
+		win_percentage = pitching.calculate_win_percentage(
+			aggregated_stats['total_wins'], aggregated_stats['total_losses'])
+		k9 = pitching.calculate_k9(
+			aggregated_stats['total_strikeouts'], total_innings_pitched)
+		bb9 = pitching.calculate_bb9(
+			aggregated_stats['total_bases_on_balls'], total_innings_pitched)
+
+		Pitching.objects.update_or_create(
+			player=player,
+			year=year,
+			league=None,
+			team="OVR",
+			teams=aggregated_stats["total_teams"],
+			defaults={
+				"games": aggregated_stats["total_games"],
+				"games_started": aggregated_stats["total_games_started"],
+				"complete_games": aggregated_stats["total_complete_games"],
+				"games_finished": aggregated_stats["total_games_finished"],
+				"innings": aggregated_stats["total_innings"],
+				"innings_outs": aggregated_stats["total_innings_outs"],
+				"wins": aggregated_stats["total_wins"],
+				"losses": aggregated_stats["total_losses"],
+				"saves": aggregated_stats["total_saves"],
+				"total_batters_faced": aggregated_stats["total_batters_faced"],
+				"at_bats": aggregated_stats["total_at_bats"],
+				"hits": aggregated_stats["total_hits"],
+				"doubles": aggregated_stats["total_doubles"],
+				"triples": aggregated_stats["total_triples"],
+				"home_runs": aggregated_stats["total_home_runs"],
+				"bases_on_balls": aggregated_stats["total_bases_on_balls"],
+				"strikeouts": aggregated_stats["total_strikeouts"],
+				"batting_average": batting_average,
+				"whip": whip,
+				"win_percentage": win_percentage,
+				"k9": k9,
+				"bb9": bb9
+			},
+		)
+
+
 def import_pitching_stats(player, pitching_stats):
 	yearly_entries = defaultdict(list)
 
@@ -184,10 +409,12 @@ def import_pitching_stats(player, pitching_stats):
 		at_bats = entry.get('at_bats', 0)
 		hits = entry.get('hits', 0)
 		walks = entry.get('bases_on_balls', 0)
-		innings_pitched = entry.get('innings_pitched', 0)
+		innings, innings_outs = str(entry.get('innings_pitched')).split(".")
 		wins = entry.get('wins', 0)
 		losses = entry.get('losses', 0)
 		strikeouts = entry.get('strikeouts', 0)
+
+		innings_pitched = pitching.get_innings_pitched(innings, innings_outs)
 
 		batting_average = batting.calculate_batting_average(hits, at_bats)
 		whip = pitching.calculate_whip(hits, walks, innings_pitched)
@@ -206,7 +433,8 @@ def import_pitching_stats(player, pitching_stats):
 				'games_started': entry.get("games_started"),
 				'complete_games': entry.get("complete_games"),
 				'games_finished': entry.get("games_finished"),
-				'innings_pitched': innings_pitched,
+				'innings': innings,
+				'innings_outs': innings_outs,
 				'wins': wins,
 				'losses': losses,
 				'saves': entry.get("saves"),
@@ -226,72 +454,8 @@ def import_pitching_stats(player, pitching_stats):
 			}
 		)
 
-	duplicate_years = [key for key, entries in yearly_entries.items() if len(entries) > 1]
-
-	for year in duplicate_years:
-		aggregated_stats = Pitching.objects.filter(player=player, year=year).aggregate(
-			total_teams=Sum("teams"),
-			total_games=Sum("games") or 0,
-			total_games_started=Sum("games_started") or 0,
-			total_complete_games=Sum("complete_games") or 0,
-			total_games_finished=Sum("games_finished") or 0,
-			total_innings_pitched=Sum("innings_pitched") or 0,
-			total_wins=Sum("wins") or 0,
-			total_losses=Sum("losses") or 0,
-			total_saves=Sum("saves") or 0,
-			total_batters_faced=Sum("total_batters_faced") or 0,
-			total_at_bats=Sum("at_bats") or 0,
-			total_hits=Sum("hits") or 0,
-			total_doubles=Sum("doubles") or 0,
-			total_triples=Sum("triples") or 0,
-			total_home_runs=Sum("home_runs") or 0,
-			total_bases_on_balls=Sum("bases_on_balls") or 0,
-			total_strikeouts=Sum("strikeouts") or 0,
-		)
-
-		# Calculated stats for aggregated season stats
-		batting_average = batting.calculate_batting_average(
-			aggregated_stats["total_hits"], aggregated_stats["total_at_bats"])
-		whip = pitching.calculate_whip(
-			aggregated_stats['total_hits'], aggregated_stats['total_bases_on_balls'],
-			aggregated_stats['total_innings_pitched'])
-		win_percentage = pitching.calculate_win_percentage(
-			aggregated_stats['total_wins'], aggregated_stats['total_losses'])
-		k9 = pitching.calculate_k9(
-			aggregated_stats['total_strikeouts'], aggregated_stats['total_innings_pitched'])
-		bb9 = pitching.calculate_bb9(
-			aggregated_stats['total_bases_on_balls'], aggregated_stats['total_innings_pitched'])
-
-		Pitching.objects.update_or_create(
-			player=player,
-			year=year,
-			league=None,
-			team="OVR",
-			teams=aggregated_stats["total_teams"],
-			defaults={
-				"games": aggregated_stats["total_games"],
-				"games_started": aggregated_stats["total_games_started"],
-				"complete_games": aggregated_stats["total_complete_games"],
-				"games_finished": aggregated_stats["total_games_finished"],
-				"innings_pitched": aggregated_stats["total_innings_pitched"],
-				"wins": aggregated_stats["total_wins"],
-				"losses": aggregated_stats["total_losses"],
-				"saves": aggregated_stats["total_saves"],
-				"total_batters_faced": aggregated_stats["total_batters_faced"],
-				"at_bats": aggregated_stats["total_at_bats"],
-				"hits": aggregated_stats["total_hits"],
-				"doubles": aggregated_stats["total_doubles"],
-				"triples": aggregated_stats["total_triples"],
-				"home_runs": aggregated_stats["total_home_runs"],
-				"bases_on_balls": aggregated_stats["total_bases_on_balls"],
-				"strikeouts": aggregated_stats["total_strikeouts"],
-				"batting_average": batting_average,
-				"whip": whip,
-				"win_percentage": win_percentage,
-				"k9": k9,
-				"bb9": bb9
-			},
-		)
+	aggregate_pitching_stats(player, yearly_entries)
+	aggregate_career_pitching_stats(player)
 
 
 def import_data(data):
@@ -329,17 +493,17 @@ def import_data(data):
 				player.height_inches = entry.get("height_inches")
 				player.save()
 
-			batting = entry['stats']['batting']
-			pitching = entry['stats']['pitching']
+			batting_entries = entry['stats']['batting']
+			pitching_entries = entry['stats']['pitching']
 
-			if batting:
-				import_batting_stats(player, batting)
+			if batting_entries:
+				import_batting_stats(player, batting_entries)
 
-			if pitching:
-				import_pitching_stats(player, pitching)
+			if pitching_entries:
+				import_pitching_stats(player, pitching_entries)
 
 		except Exception as e:
-			print(e, player.name_full)
+			print(f"Error processing player {player.name_full}: {e}")
 
 	print(f"Imported {len(data)} players into the database.")
 

@@ -47,7 +47,8 @@ class Pitching(models.Model):
 	games_started = models.IntegerField(null=False, default=0)
 	complete_games = models.IntegerField(null=False, default=0)
 	games_finished = models.IntegerField(null=False, default=0)
-	innings_pitched = models.DecimalField(null=False, max_digits=5, decimal_places=2, default=0)
+	innings = models.IntegerField(null=False, default=0)
+	innings_outs = models.IntegerField(null=False, default=0)
 	wins = models.IntegerField(null=False, default=0)
 	losses = models.IntegerField(null=False, default=0)
 	saves = models.IntegerField(null=False, default=0)
@@ -60,11 +61,16 @@ class Pitching(models.Model):
 	bases_on_balls = models.IntegerField(null=False, default=0)
 	strikeouts = models.IntegerField(null=False, default=0)
 
-	batting_average = models.DecimalField(max_digits=4, decimal_places=3, default=0)
+	batting_average = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 	whip = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 	win_percentage = models.DecimalField(max_digits=4, decimal_places=3, default=0)
-	k9 = models.DecimalField(max_digits=5, decimal_places=3, default=0)
-	bb9 = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+	k9 = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+	bb9 = models.DecimalField(max_digits=6, decimal_places=3, default=0)
 
 	def __str__(self):
 		return f"{self.player.name_full} - {self.year}"
+
+	def innings_pitched(self):
+		innings, outs = divmod(self.innings_outs, 3)
+		total_innings = self.innings + innings
+		return float(f'{total_innings}.{outs}')
