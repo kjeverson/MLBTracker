@@ -16,7 +16,6 @@ class PlayerListCreate(generics.ListCreateAPIView):
 
 class BattingStatsByYearView(APIView):
     def get(self, request, year):
-        print(year)
         stats = get_list_or_404(Batting.objects.exclude(team='TOT'), year=year)
         serializer = BattingStatsSerializer(stats, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
