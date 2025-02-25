@@ -25,9 +25,7 @@ You are now in a python virtual environment. The need to install the required pa
 pip install -r requirements.txt
 ```
 
-Lastly, you will need to initialize the database (I am not sure the one provided works and should probably be removed).
-
-The expected Database Initialization Process is as follows:
+Lastly, you will need to initialize the database. The expected Database Initialization Process is as follows:
 
 Make a database migration:
 ```bash
