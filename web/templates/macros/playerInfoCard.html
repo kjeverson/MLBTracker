@@ -14,7 +14,7 @@
     </div>
     <div class="col-4 d-flex align-items-center">
         <div class="playerInformation">
-            <h4>{{ player.name_first }}</h4>
+            <h4>{{ player.name_use }}</h4>
             <h1>{{ player.name_last }}</h1>
             <h6>{% if player.primary_position %}<span class="badge bg-light text-dark">{{ player.get_primary_position }}{% if player.secondary_position %}/{{ player.get_secondary_position }}{% endif %}</span>{% endif %} {{ player.team.full_name }}</h6>
             <small>
