@@ -3,10 +3,11 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET
 from MLBTracker.models.player import Player
+from MLBTracker.models.statistics import Batting, Pitching
 
 
-def home(request):
-	return render(request, 'index.html')
+def players(request):
+	return render(request, 'players.html')
 
 
 @require_GET
@@ -31,3 +32,27 @@ def get_player_modal(request, player_id):
 	modal = render_to_string('modals/playerModal.html', context)
 	return JsonResponse({'html': modal})
 
+
+def batting(request):
+	years = list(Batting.objects.all()
+				 .order_by('-year')
+				 .values_list('year', flat=True)
+				 .distinct())
+
+	context = {
+		'years': years
+	}
+	return render(request, 'batting_stats.html', context)
+
+
+def pitching(request):
+	years = list(Pitching.objects.all()
+				 .order_by('-year')
+				 .values_list('year', flat=True)
+				 .distinct())
+
+	context = {
+		'years': years
+	}
+
+	return render(request, 'pitching_stats.html', context)

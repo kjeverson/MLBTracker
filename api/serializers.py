@@ -10,6 +10,18 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = '__all__'
+
+
+class PlayerShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ["id", "name_full", "get_primary_position"]
+
+
 class PlayerListSerializer(serializers.ModelSerializer):
     team = TeamSerializer()
 
@@ -21,7 +33,9 @@ class PlayerListSerializer(serializers.ModelSerializer):
                   "team"]
 
 
-class BattingSerializer(serializers.ModelSerializer):
+class BattingStatsSerializer(serializers.ModelSerializer):
+    player = PlayerShortSerializer()
+
     class Meta:
         model = Batting
         unique_together = ('player', 'year', 'league', 'team')
@@ -29,9 +43,16 @@ class BattingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PitchingSerializer(serializers.ModelSerializer):
+class PitchingStatsSerializer(serializers.ModelSerializer):
+    player = PlayerShortSerializer()
+    innings_pitched = serializers.SerializerMethodField()
+
     class Meta:
         model = Pitching
         unique_together = ('player', 'year', 'league', 'team')
         ordering = ['-year', 'player']
         fields = '__all__'
+
+    def get_innings_pitched(self, obj):
+        # Call the innings_pitched method from your model instance (obj)
+        return obj.innings_pitched()
