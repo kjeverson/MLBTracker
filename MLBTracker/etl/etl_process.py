@@ -1,4 +1,5 @@
 import json
+import sys
 import requests
 import datetime
 from collections import defaultdict
@@ -463,6 +464,10 @@ def import_pitching_stats(player, pitching_stats):
 
 
 def import_data(data):
+
+	total = len(data)
+	current = 0
+
 	for entry in data:
 		team_key = entry["team"]
 		team = Team.objects.get(pk=team_key)
@@ -511,12 +516,27 @@ def import_data(data):
 			if pitching_entries:
 				import_pitching_stats(player, pitching_entries)
 
+			current += 1
+			progress_bar(total, current)
+
 		except Exception as e:
 			print(f"Error processing player {player.name_full}: {e}")
 
-	print(f"Imported {len(data)} players into the database.")
+	print(f"\nImported {len(data)} players into the database.")
 
 
+def progress_bar(total, current):
+	bar_length = 40  # Length of the progress bar
+	block = int(round(bar_length * current / total))
+	progress = "#" * block + "-" * (bar_length - block)
+	percent = int((current / total) * 100)
 
+	if percent == 100:
+		percent = "DONE"
+	else:
+		percent = f'{percent}%'
+
+	sys.stdout.write(f"\r[{progress}] {percent}")
+	sys.stdout.flush()
 
 
