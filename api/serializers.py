@@ -19,7 +19,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 class PlayerShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ["id", "name_full", "get_primary_position"]
+        fields = ["id", "name_short", "get_primary_position"]
 
 
 class PlayerListSerializer(serializers.ModelSerializer):
