@@ -2,6 +2,9 @@
 
 A web application designed to track and display MLB Players and Statistics. Built with Python, Django, SQLite, Bootstrap, and jQuery.
 
+## About This Project:
+This is my first project using Django. Throughout development, I've leveraged Django's powerful features to create a structured and scalable application. While new to Django, I applied my prior experience with web development frameworks like Flask to quickly get up to speed with Django's best practices. The project demonstrates my ability to learn and adapt to new technologies, and I look forward to refining my Django skills through further projects.
+
 ## Features:
  - Player Information
  - Player Statistics
