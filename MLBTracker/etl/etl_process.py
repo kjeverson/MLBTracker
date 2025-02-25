@@ -193,6 +193,10 @@ def import_batting_stats(player, batting_stats):
 		if entry['org_abbreviation'] == 'OVR':
 			continue
 
+		# Skip entries with no plate appearances
+		if entry['plate_appearances'] == 0:
+			continue
+
 		year = entry['year']
 		yearly_entries[year].append(entry)
 
