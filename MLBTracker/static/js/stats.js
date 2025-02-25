@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname;
     if(currentPage == '/batting/'){
+        updateNav(currentPage);
         fetchBattingStats();
     }
     else {
+        updateNav(currentPage);
         fetchPitchingStats();
     }
 
